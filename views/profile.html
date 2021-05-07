@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile page</title>
+  <link rel="stylesheet" href="./mvp.css" />
+</head>
+<body>
+   <main> 
+     <h1>Profile page</h1>
+     <p>Admin connecté</p>
+     <section>
+        <form action="/add" method="POST" id="signup">
+          <label>Email</label>
+          <input type="text" name="email" id="email"/>
+          <input type="submit" value="Inscrire"/>
+        </form>
+    </section>
+     <a href="/sessionLogout">Se deconnecté</a>
+     <label>Filtrer par email : </label>
+    
+     <input id="dataSearch" type="text" value=""/>
+     <button id="search">Rechercher</button>
+    <div id="array"></div>
+
+     <script>
+      window.addEventListener("DOMContentLoaded", async () => {
+
+      const button = document.querySelector('#search')
+      button.addEventListener('click', event => {
+        const dataSearch = document.querySelector('#dataSearch').value
+        getList(dataSearch);
+      });
+
+      const getList = (params) => fetch("/listusers", {
+          method: "GET",
+        }).then(async(response) => {
+      let user = await response.json()
+      if(params !== "all") {
+        const newArray = user.filter(data => data.email.startsWith(params))
+        user = newArray;
+      }
+      var html = ""
+      html += "<table class='t1 t2'>"
+        html += "<tr>"
+          html += "<th class='foo'> email </th>"
+          html += "<th> password </th>"
+          html += "<th> pro </th>"
+          html += "<th> mdp oublié </th>"
+        html += "</tr>"
+      user.forEach((item, key) => {
+          html += "<tr>"
+            html += "<th>" + item.email + "</th>"
+            html += "<th>" + item.password + "</th>"
+            html += "<th>" + item.pro + "</th>"
+            html += "<th><button id='resetPassword' data-password=" + item.email + "> Email </button></th>"
+          html += "</tr>"
+      })
+      html += "</table>"
+      document.querySelector("#array").innerHTML = html
+    });
+    await getList('all')
+    const button2 = document.querySelector('#resetPassword')
+      button2.addEventListener('click', event => {
+        const dataSearch = button2.getAttribute('data-password')
+        const button = document.querySelector('#search')
+        console.log('iicicicicic', dataSearch)
+        let data = { email : dataSearch}
+        return fetch("/resetPassword", {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data),
+        })
+      });
+});
+
+
+    </script>
+
+   </main>
+</body>
+</html>

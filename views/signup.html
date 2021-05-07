@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Firebase Server Auth</title>
+    <link rel="stylesheet" href="./mvp.css" />
+  </head>
+  <body>
+    <main>
+      <section>
+        <form id="signup" action="/signup" method="POST">
+          <label>Email</label>
+          <input type="text" name="email" />
+          <label>Mot de passe</label>
+          <input type="password" name="password" />
+          <button>S'inscrire</button>
+        </form>
+      </section>
+
+      <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-app.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-auth.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+
+      
+    </main>
+  </body>
+</html>
