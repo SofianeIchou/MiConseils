@@ -17,29 +17,46 @@ fs.initializeApp({
   credential: fs.credential.cert(serviceAccount),
   databaseURL:"https://express-server-auth-8cea5.firebaseio.com/",
  });
- const db = fs.firestore(); 
- 
+ const db = fs.firestore();
+
 
 exports.addUser = async (email, password) => {
   await fb.auth().createUserWithEmailAndPassword(email, password)
-  .then(function(user){   
-    console.log('uid',user.user.uid)  
-    return user.user.uid  
-  //Here if you want you can sign in the user 
+  .then(function(user){
+    console.log('uid',user.user.uid)
+    return user.user.uid
+  //Here if you want you can sign in the user
 })
   .catch(function(error) {
-    console.log(error)  
-    
-    //Handle error 
+    console.log(error)
+
+    //Handle error
   });
 
-  
 }
 
 
 exports.authenticate = (email, password) =>
   fb.auth()
   .signInWithEmailAndPassword(email, password)
+  .then( async (response) => {
+
+  var usersDb = db.collection("users");
+  var oui = await usersDb.doc(response.user.uid)
+  .get().then(snap => {
+    return snap.data()
+
+})
+  return oui
+  })
+
+exports.logout = () => {
+  fb.auth().signOut().then(function(response) {
+    console.log(' heeeeeeee hoooooooooo',response)
+  }, function(error) {
+    console.log(' haaaaaaaaaaaaaa hiiiiiiiiiiiiiii',error)
+});
+}
 
 exports.listUsers = async () => {
   var usersDb = db.collection("users");
@@ -66,7 +83,7 @@ exports.addUsers = async (email, password) => {
   .then(function(user){
     var uid = user.user.uid
     const usersDb = db.collection('users');
-  usersDb.doc(uid).set({email:email, password:password, pro:true})
+  usersDb.doc(uid).set({email:email, password:password, pro:true, admin:false})
   .then(() => {
     console.log("User successfully written!");
 })

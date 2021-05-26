@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="./mvp.css" />
 </head>
 <body>
-   <main> 
+   <main>
      <h1>Profile page</h1>
      <p>Admin connecté</p>
      <section>
@@ -17,9 +17,10 @@
           <input type="submit" value="Inscrire"/>
         </form>
     </section>
-     <a href="/sessionLogout">Se deconnecté</a>
-     <label>Filtrer par email : </label>
     
+     <button id="logout">Se deconnecté</button>
+     <label>Filtrer par email : </label>
+
      <input id="dataSearch" type="text" value=""/>
      <button id="search">Rechercher</button>
     <div id="array"></div>
@@ -31,6 +32,16 @@
         button.addEventListener('click', event => {
           const dataSearch = document.querySelector('#dataSearch').value
           getList(dataSearch);
+        });
+
+        const button3 = document.querySelector('#logout')
+        button3.addEventListener('click', event => {
+          fetch("/sessionLogout", {method:"GET"} ).then(response => {
+            console.log(response)
+          })
+          .catch(error => {
+            console.log(error)
+          }) 
         });
   
         const getList = (params) => fetch("/listusers", {
@@ -45,27 +56,23 @@
         html += "<table class='t1 t2'>"
           html += "<tr>"
             html += "<th class='foo'> email </th>"
-            html += "<th> password </th>"
             html += "<th> pro </th>"
             html += "<th> mdp oublié </th>"
           html += "</tr>"
         user.forEach((item, key) => {
             html += "<tr>"
               html += "<th>" + item.email + "</th>"
-              html += "<th>" + item.password + "</th>"
               html += "<th>" + item.pro + "</th>"
               html += "<th><button class='resetPassword' data-password=" + item.email + "> Email </button></th>"
             html += "</tr>"
         })
         html += "</table>"
         document.querySelector("#array").innerHTML = html
-      });
-      await getList('all')
-      const button2 = document.querySelectorAll('.resetPassword')
+        const button2 = document.querySelectorAll('.resetPassword')
       console.log('ici', button2)
       button2.forEach((elm, key) => {
-        console.log("ici", elm)
         elm.addEventListener('click', event => {
+          console.log("coucou",elm)
           const dataSearch = elm.getAttribute('data-password')
           let data = { email : dataSearch}
           return fetch("/resetPassword", {
@@ -77,6 +84,9 @@
           })
         });
       })
+      });
+      await getList('all')
+      
   });
 </script>
 

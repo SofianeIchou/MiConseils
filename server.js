@@ -23,7 +23,7 @@ app.use(function (req, res, next) {
     console.log('cookie created successfully');
   } else {
 
-    // yes, cookie was already present 
+    // yes, cookie was already present
 
   }
   next(); // <-- important!
@@ -47,6 +47,11 @@ app.get("/login", function (req, res) {
 app.get("/", function (req, res) {
   res.render("login.html");
 });
+app.get("/sessionLogout", async function (req, res) {
+  const user = await userService.logout();
+  console.log('gtru')
+  res.redirect("/login");
+});
 app.get("/signup", function (req, res) {
   res.render("signup.html");
 });
@@ -55,12 +60,18 @@ app.get("/profile", function (req, res) {
   res.render("profile.html");
 });
 
+app.get("/unauthorized", function (req, res) {
+  res.render("unauthorized.html");
+});
+
 app.post("/login", async (req, res) => {
 
   const { email, password } = req.body;
   try {
     const user = await userService.authenticate(email, password);
-
+    console.log(user)
+    if( user && !user.admin)
+      return res.redirect("/unauthorized")
     //res.json(user);
     //res.end();
     //res.status(200).json(user);
